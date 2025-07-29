@@ -1,0 +1,646 @@
+{
+  "info": {
+    "name": "QA API Tests — Full Coverage (GoRest + ReqRes)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Covers POST, PATCH, GET, DELETE with valid & negative scenarios + schema validation."
+  },
+  "item": [
+    {
+      "name": "New User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();\r",
+              "pm.collectionVariables.set(\"createdUserId\", response.id);\r",
+              "console.log(\"User ID saved:\", response.id);"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.variables.set(\"randomNumber\", Math.floor(Math.random() * 100000));"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"PatchUser\",\r\n  \"gender\": \"male\",\r\n  \"email\": \"autouser_{{randomNumber}}@mail.com\",\r\n  \"status\": \"active\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://gorest.co.in/public/v2/users",
+          "protocol": "https",
+          "host": [
+            "gorest",
+            "co",
+            "in"
+          ],
+          "path": [
+            "public",
+            "v2",
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response;\r",
+              "const code = response.code;\r",
+              "let json = {};\r",
+              "\r",
+              "try {\r",
+              "    json = response.json();\r",
+              "} catch (e) {\r",
+              "    console.warn(\"Ответ не JSON, возможно пустой или HTML:\", e);\r",
+              "}\r",
+              "\r",
+              "// 1. Проверка успешного статуса\r",
+              "pm.test(\"Успешный статус 200\", function () {\r",
+              "    pm.expect(code).to.eql(200);\r",
+              "});\r",
+              "// 2.Сохраняем поля для следующего GET\r",
+              "pm.collectionVariables.set(\"patched_name\", json.name);\r",
+              "pm.collectionVariables.set(\"patched_status\", json.status);\r",
+              "pm.collectionVariables.set(\"patched_gender\", json.gender);\r",
+              "// 3. Проверка структуры тела ответа (JSON Schema)\r",
+              "const schema = {\r",
+              "    type: \"object\",\r",
+              "    required: [\"id\", \"name\", \"email\", \"gender\", \"status\"],\r",
+              "    properties: {\r",
+              "        id: { type: \"integer\" },\r",
+              "        name: { type: \"string\" },\r",
+              "        email: { type: \"string\", format: \"email\" },\r",
+              "        gender: { type: \"string\", enum: [\"male\", \"female\"] },\r",
+              "        status: { type: \"string\", enum: [\"active\", \"inactive\"] }\r",
+              "    }\r",
+              "};\r",
+              "\r",
+              "const result = tv4.validateMultiple(json, schema);\r",
+              "\r",
+              "pm.test(\"Схема ответа корректна\", function () {\r",
+              "    pm.expect(result.valid).to.be.true;\r",
+              "});\r",
+              "\r",
+              "if (!result.valid) {\r",
+              "    console.warn(\"Ошибки схемы:\");\r",
+              "    result.errors.forEach(err => console.log(`- ${err.message} at ${err.dataPath}`));\r",
+              "}\r",
+              "\r",
+              "// 4. Негативные проверки:\r",
+              "if (code === 422) {\r",
+              "    pm.test(\"Ожидаемый отказ при некорректных данных\", function () {\r",
+              "        pm.expect(json).to.have.property(\"data\");\r",
+              "        const errorFields = json.data.map(e => e.field);\r",
+              "        pm.expect(errorFields).to.include.any.members([\"email\", \"gender\", \"status\"]);\r",
+              "    });\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Updated User Name\",\r\n  \"gender\": \"male\",\r\n  \"status\": \"inactive\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://gorest.co.in/public/v2/users/{{createdUserId}}",
+          "protocol": "https",
+          "host": [
+            "gorest",
+            "co",
+            "in"
+          ],
+          "path": [
+            "public",
+            "v2",
+            "users",
+            "{{createdUserId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();\r",
+              "pm.collectionVariables.set(\"createdUserId\", response.id);\r",
+              "console.log(\"User ID saved:\", response.id);\r",
+              "const json = pm.response.json();\r",
+              "\r",
+              "pm.test(\"GET 200 OK\", () => {\r",
+              "  pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Name соответствует обновлённому\", () => {\r",
+              "  pm.expect(json.name).to.eql(pm.collectionVariables.get(\"patched_name\"));\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Status соответствует обновлённому\", () => {\r",
+              "  pm.expect(json.status).to.eql(pm.collectionVariables.get(\"patched_status\"));\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Gender соответствует обновлённому\", () => {\r",
+              "  pm.expect(json.gender).to.eql(pm.collectionVariables.get(\"patched_gender\"));\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.variables.set(\"randomNumber\", Math.floor(Math.random() * 100000));"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"PatchUser\",\r\n  \"gender\": \"male\",\r\n  \"email\": \"autouser_{{randomNumber}}@mail.com\",\r\n  \"status\": \"active\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://gorest.co.in/public/v2/users/{{createdUserId}}",
+          "protocol": "https",
+          "host": [
+            "gorest",
+            "co",
+            "in"
+          ],
+          "path": [
+            "public",
+            "v2",
+            "users",
+            "{{createdUserId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 204 or 404\", function () {\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([204, 404]);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://gorest.co.in/public/v2/users/{{createdUserId}}",
+          "protocol": "https",
+          "host": [
+            "gorest",
+            "co",
+            "in"
+          ],
+          "path": [
+            "public",
+            "v2",
+            "users",
+            "{{createdUserId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /users(JSON Schema в Postman)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "\r",
+              "// === ✅ Гибкий шаблон проверки массива объектов в ответе API ===\r",
+              "\r",
+              "const response = pm.response.json();\r",
+              "\r",
+              "// 1. Проверка структуры\r",
+              "pm.test(\"Массив data существует и не пуст\", function () {\r",
+              "    pm.expect(response.data).to.be.an(\"array\").that.is.not.empty;\r",
+              "});\r",
+              "\r",
+              "// 2. Кастомные проверки по каждому пользователю\r",
+              "response.data.forEach((user, index) => {\r",
+              "    pm.test(`User #${index + 1}: ID — число`, function () {\r",
+              "        pm.expect(user.id).to.be.a(\"number\");\r",
+              "    });\r",
+              "\r",
+              "    pm.test(`User #${index + 1}: Email содержит @`, function () {\r",
+              "        pm.expect(user.email).to.include(\"@\");\r",
+              "    });\r",
+              "\r",
+              "    pm.test(`User #${index + 1}: Avatar — .jpg или .png`, function () {\r",
+              "        pm.expect(user.avatar).to.match(/\\.(jpg|png)$/);\r",
+              "    });\r",
+              "\r",
+              "    pm.test(`User #${index + 1}: Имя не пустое`, function () {\r",
+              "        pm.expect(user.first_name).to.be.a(\"string\").that.is.not.empty;\r",
+              "    });\r",
+              "});\r",
+              "\r",
+              "// 3. Проверка возрастания ID (если актуально)\r",
+              "let ids = response.data.map(u => u.id);\r",
+              "pm.test(\"ID возрастают по порядку\", function () {\r",
+              "    for (let i = 1; i < ids.length; i++) {\r",
+              "        pm.expect(ids[i]).to.be.above(ids[i - 1]);\r",
+              "    }\r",
+              "});\r",
+              "\r",
+              "// 4. Валидация схемы через tv4 (расширено)\r",
+              "const schema = {\r",
+              "    type: \"object\",\r",
+              "    required: [\"data\"],\r",
+              "    properties: {\r",
+              "        data: {\r",
+              "            type: \"array\",\r",
+              "            items: {\r",
+              "                type: \"object\",\r",
+              "                required: [\"id\", \"email\", \"first_name\", \"last_name\", \"avatar\"],\r",
+              "                properties: {\r",
+              "                    id: { type: \"integer\" },\r",
+              "                    email: { type: \"string\", format: \"email\" },\r",
+              "                    first_name: { type: \"string\" },\r",
+              "                    last_name: { type: \"string\" },\r",
+              "                    avatar: { type: \"string\", format: \"uri\" }\r",
+              "                }\r",
+              "            }\r",
+              "        }\r",
+              "    }\r",
+              "};\r",
+              "\r",
+              "const result = tv4.validateMultiple(response, schema);\r",
+              "pm.test(\"Схема ответа соответствует ожиданиям\", function () {\r",
+              "    pm.expect(result.valid).to.be.true;\r",
+              "});\r",
+              "\r",
+              "if (!result.valid) {\r",
+              "    const errors = result.errors.map(e => ({\r",
+              "        message: e.message,\r",
+              "        dataPath: e.dataPath,\r",
+              "        schemaPath: e.schemaPath\r",
+              "    }));\r",
+              "\r",
+              "    console.log(\"🧨 Нарушения схемы (всего \" + errors.length + \"):\");\r",
+              "    console.table(errors);\r",
+              "\r",
+              "    const errorMessages = errors.map(\r",
+              "        (e, i) => `${i + 1}) ${e.message} at ${e.dataPath}`\r",
+              "    ).join(\"\\n\");\r",
+              "\r",
+              "    pm.test(\"Ошибки схемы\", function () {\r",
+              "        pm.expect.fail(\"Схема невалидна:\\n\" + errorMessages);\r",
+              "    });\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://reqres.in/api/users?page=2",
+          "protocol": "https",
+          "host": [
+            "reqres",
+            "in"
+          ],
+          "path": [
+            "api",
+            "users"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PATCH / - ❌ non-existent ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 404\", () => {\r",
+              "    pm.expect(pm.response.code).to.eql(404);\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://gorest.co.in/public/v2/users/12",
+          "protocol": "https",
+          "host": [
+            "gorest",
+            "co",
+            "in"
+          ],
+          "path": [
+            "public",
+            "v2",
+            "users",
+            "12"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /users - Create User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();",
+              "",
+              "pm.test(\"Статус 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "const schema = {",
+              "    type: \"object\",",
+              "    required: [\"name\", \"job\", \"id\"],",
+              "    properties: {",
+              "        name: { type: \"string\" },",
+              "        job: { type: \"string\" },",
+              "        id: { type: \"integer\" }",
+              "    }",
+              "};",
+              "",
+              "const valid = tv4.validate(response, schema);",
+              "",
+              "pm.test(\"Схема валидна\", function () {",
+              "    pm.expect(valid).to.be.true;",
+              "});",
+              "",
+              "if (!valid) {",
+              "    console.log(\"Ошибка схемы:\", tv4.error);",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"AutoUser\",\n  \"job\": \"QA Engineer\"\n}"
+        },
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts",
+          "protocol": "https",
+          "host": [
+            "jsonplaceholder",
+            "typicode",
+            "com"
+          ],
+          "path": [
+            "posts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Post- response(400/401/422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response;\r",
+              "const status = response.code;\r",
+              "let json = {};\r",
+              "\r",
+              "try {\r",
+              "    json = response.json();\r",
+              "} catch (e) {\r",
+              "    console.warn(\"Не удалось распарсить JSON:\", e);\r",
+              "}\r",
+              "\r",
+              "// 1. Проверка ожидаемого статус-кода (например, 400, 401, 422)\r",
+              "pm.test(\"Ожидаемый статус ошибки\", function () {\r",
+              "    pm.expect([400, 401, 422]).to.include(status);\r",
+              "});\r",
+              "\r",
+              "// 2. Структура тела ошибки (например, наличие поля `error`)\r",
+              "pm.test(\"Ответ содержит поле error\", function () {\r",
+              "    pm.expect(json).to.have.property(\"error\");\r",
+              "});\r",
+              "\r",
+              "// 3. Дополнительная проверка текста ошибки\r",
+              "pm.test(\"Текст ошибки корректный\", function () {\r",
+              "    pm.expect(json.error.toLowerCase()).to.include(\"missing\"); // или 'invalid', 'unauthorized' — зависит от API\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "reqres-free-v1",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"sydney@fife\"\r\n}"
+        },
+        "url": {
+          "raw": "https://reqres.in/api/register",
+          "protocol": "https",
+          "host": [
+            "reqres",
+            "in"
+          ],
+          "path": [
+            "api",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
