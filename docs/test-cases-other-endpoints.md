@@ -2,19 +2,19 @@
 
 ## 📑 Contents
 
-- [TC_API_PATCH_001 — Update user with invalid data](#tc-api-patch-001)
-- [TC_API_GET_001 — Attempt GET with invalid PATCH payload](#tc-api-get-001)
-- [TC_API_DELETE_001 — Basic user deletion by ID](#tc-api-delete-001)
-- [TC_API_PATCH_002 — PATCH — Valid user update](#tc-api-patch-002)
-- [TC_API_GET_002 — GET — Fetch user by ID after update](#tc-api-get-002)
-- [TC_API_GET_003 — GET — Validate response schema (reqres.in)](#tc-api-get-003)
-- [TC_API_PATCH_003 — PATCH — Update user with valid data (duplicate case check)](#tc-api-patch-003)
-- [TC_API_DELETE_002 — DELETE — Attempt to delete already deleted user](#tc-api-delete-002)
-- [TC_API_GET_004 — GET — Validate users endpoint schema (alt variant)](#tc-api-get-004)
-- [TC_API_GET_005 — GET — Third schema validation (reqres.in)](#tc-api-get-005)
-- [TC_API_PATCH_004 — PATCH — Update non-existent user](#tc-api-patch-004)
-- [TC_API_DELETE_003 — DELETE — Without authorization token](#tc-api-delete-003)
-- [TC_API_POST_011 — POST — Register with missing fields (reqres)](#tc-api-post-011)
+- [Update user with invalid data](#update-user-with-invalid-data)
+- [Attempt GET with invalid PATCH payload](#attempt-get-with-invalid-patch-payload)
+- [Basic user deletion by ID](#basic-user-deletion-by-id)
+- [PATCH — Valid user update](#patch-valid-user-update)
+- [GET — Fetch user by ID after update](#get-fetch-user-by-id-after-update)
+- [GET — Validate response schema (reqres.in)](#get-validate-response-schema-reqresin)
+- [PATCH — Update user with valid data (duplicate case check)](#patch-update-user-with-valid-data-duplicate-case-check)
+- [DELETE — Attempt to delete already deleted user](#delete-attempt-to-delete-already-deleted-user)
+- [GET — Validate users endpoint schema (alt variant)](#get-validate-users-endpoint-schema-alt-variant)
+- [GET — Third schema validation (reqres.in)](#get-third-schema-validation-reqresin)
+- [PATCH — Update non-existent user](#patch-update-non-existent-user)
+- [DELETE — Without authorization token](#delete-without-authorization-token)
+- [POST — Register with missing fields (reqres)](#post-register-with-missing-fields-reqres)
 
 ---
 
