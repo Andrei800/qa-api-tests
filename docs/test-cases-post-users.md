@@ -1,19 +1,3 @@
-## 📑 Table of Contents
-
-- [Negative email validation in `/users` API](#negative-email-validation-in-users-api)
-- [Submitting an empty request body to POST `/users`](#submitting-an-empty-request-body-to-post-users)
-- [Missing all fields](#missing-all-fields)
-- [Missing email](#missing-email)
-- [Missing gender](#missing-gender)
-- [Missing name](#missing-name)
-- [Invalid email](#invalid-email)
-- [Invalid gender](#invalid-gender)
-- [POST with incorrect data types](#post-with-incorrect-data-types)
-- [Fields contain only spaces (" ")](#fields-contain-only-spaces-)
-
-
-# Test Cases: POST /users (Negative Scenarios)
-
 ## 📑 Contents
 
 - [TC_API_POST_001 — Invalid email](#tc_api_post_001--invalid-email)

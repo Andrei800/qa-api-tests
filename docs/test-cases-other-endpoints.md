@@ -2,19 +2,16 @@
 
 ## 📑 Contents
 
-- [Update user with invalid data](#update-user-with-invalid-data)
-- [Attempt GET with invalid PATCH payload](#attempt-get-with-invalid-patch-payload)
-- [Basic user deletion by ID](#basic-user-deletion-by-id)
-- [PATCH — Valid user update](#patch-valid-user-update)
-- [GET — Fetch user by ID after update](#get-fetch-user-by-id-after-update)
-- [GET — Validate response schema (reqres.in)](#get-validate-response-schema-reqresin)
-- [PATCH — Update user with valid data (duplicate case check)](#patch-update-user-with-valid-data-duplicate-case-check)
-- [DELETE — Attempt to delete already deleted user](#delete-attempt-to-delete-already-deleted-user)
-- [GET — Validate users endpoint schema (alt variant)](#get-validate-users-endpoint-schema-alt-variant)
-- [GET — Third schema validation (reqres.in)](#get-third-schema-validation-reqresin)
-- [PATCH — Update non-existent user](#patch-update-non-existent-user)
-- [DELETE — Without authorization token](#delete-without-authorization-token)
-- [POST — Register with missing fields (reqres)](#post-register-with-missing-fields-reqres)
+- [TC_API_PATCH_001 — Update user with invalid data](#tc-api-patch-001)
+- [TC_API_GET_001 — Attempt GET with invalid PATCH payload](#tc-api-get-001)
+- [TC_API_DELETE_001 — Basic user deletion by ID](#tc-api-delete-001)
+- [TC_API_PATCH_002 — PATCH — Valid user update](#tc-api-patch-002)
+- [TC_API_GET_002 — GET — Fetch user by ID after update](#tc-api-get-002)
+- [TC_API_GET_003 — GET — Validate response schema (reqres.in)](#tc-api-get-003)
+- [TC_API_PATCH_003 — PATCH — Update user with valid data (duplicate case check)](#tc-api-patch-003)
+- [TC_API_DELETE_002 — DELETE — Attempt to delete already deleted user](#tc-api-delete-002)
+- [TC_API_GET_004 — GET — Validate users endpoint schema (alt variant)](#tc-api-get-004)
+- [TC_API_GET_005 — GET — Third schema validation (reqres.in)](#tc-api-get-005)
 
 ---
 
@@ -357,88 +354,4 @@ curl -X GET "https://reqres.in/api/users?page=2" \
 ```bash
 curl -X GET "https://reqres.in/api/users?page=2" \
   -H "Content-Type: application/json"
-```
----
-
-## Test Case: PATCH — Update non-existent user
-
-| Field              | Value                                                                 |
-|-------------------|------------------------------------------------------------------------|
-| **ID**            | TC_API_PATCH_004                                                       |
-| **Title**         | PATCH `/users/12` — Update non-existent user                           |
-| **Priority**      | Medium                                                                 |
-| **Test Type**     | Negative / API / Not Found                                             |
-| **Preconditions** | User is authorized and has access to the API                           |
-| **Steps to Reproduce** | 1. Send a `PATCH` request to `/users/12` with valid body <br>2. Add header: `Content-Type: application/json` |
-| **Expected Result** | HTTP 404 Not Found                                                    |
-| **Actual Result** | 404 Not Found returned                                                 |
-| **Status**        | ✅ Passed                                                               |
-| **Comment**       | Non-existent user scenario                                             |
-| **Date**          | 2025-07-29                                                             |
-| **Author**        | Andrei800                                                              |
-
-### Example request (curl)
-
-```bash
-curl -X PATCH https://gorest.co.in/public/v2/users/12 \
-  -H "Authorization: Bearer <your_token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-  "name": "Updated QA"
-}'
-```
-
----
-
-## Test Case: DELETE — Without authorization token
-
-| Field              | Value                                                                 |
-|-------------------|------------------------------------------------------------------------|
-| **ID**            | TC_API_DELETE_003                                                      |
-| **Title**         | DELETE `/users/:id` — Without token                                    |
-| **Priority**      | Medium                                                                 |
-| **Test Type**     | Negative / API / Authorization                                         |
-| **Preconditions** | No authorization headers included                                      |
-| **Steps to Reproduce** | 1. Send a `DELETE` request without Bearer token <br>2. Add header: `Content-Type: application/json` |
-| **Expected Result** | HTTP 401 Unauthorized                                                 |
-| **Actual Result** | 401 Unauthorized                                                       |
-| **Status**        | ✅ Passed                                                               |
-| **Comment**       | Token must be required                                                 |
-| **Date**          | 2025-07-29                                                             |
-| **Author**        | Andrei800                                                              |
-
-### Example request (curl)
-
-```bash
-curl -X DELETE https://gorest.co.in/public/v2/users/{{createdUserId}} \
-  -H "Content-Type: application/json"
-```
-
----
-
-## Test Case: POST — Register with missing fields (reqres)
-
-| Field              | Value                                                                 |
-|-------------------|------------------------------------------------------------------------|
-| **ID**            | TC_API_POST_011                                                        |
-| **Title**         | POST `/register` — Missing required fields                             |
-| **Priority**      | Medium                                                                 |
-| **Test Type**     | Negative / API / Input validation                                      |
-| **Preconditions** | Public API, no token needed                                            |
-| **Steps to Reproduce** | 1. Send a `POST` request to `/register` with only email<br>2. Add header: `Content-Type: application/json` |
-| **Expected Result** | HTTP 400 or 422 <br> Response includes validation message            |
-| **Actual Result** | Error response with `error` field                                      |
-| **Status**        | ✅ Passed                                                               |
-| **Comment**       | Covers client error from incomplete request                            |
-| **Date**          | 2025-07-29                                                             |
-| **Author**        | Andrei800                                                              |
-
-### Example request (curl)
-
-```bash
-curl -X POST https://reqres.in/api/register \
-  -H "Content-Type: application/json" \
-  -d '{
-  "email": "sydney@fife"
-}'
 ```
