@@ -1,0 +1,347 @@
+{
+	"info": {
+		"_postman_id": "a74ac978-da8d-4dc5-8ddb-7a355f16a2bc",
+		"name": "Шаблоны POST/PUTCH/GET",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46881943"
+	},
+	"item": [
+		{
+			"name": "New User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"pm.collectionVariables.set(\"createdUserId\", response.id);\r",
+							"console.log(\"User ID saved:\", response.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"randomNumber\", Math.floor(Math.random() * 100000));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"PatchUser\",\r\n  \"gender\": \"male\",\r\n  \"email\": \"autouser_{{randomNumber}}@mail.com\",\r\n  \"status\": \"active\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response;\r",
+							"const code = response.code;\r",
+							"let json = {};\r",
+							"\r",
+							"try {\r",
+							"    json = response.json();\r",
+							"} catch (e) {\r",
+							"    console.warn(\"Ответ не JSON, возможно пустой или HTML:\", e);\r",
+							"}\r",
+							"\r",
+							"// 1. Проверка успешного статуса\r",
+							"pm.test(\"Успешный статус 200\", function () {\r",
+							"    pm.expect(code).to.eql(200);\r",
+							"});\r",
+							"// 2.Сохраняем поля для следующего GET\r",
+							"pm.collectionVariables.set(\"patched_name\", json.name);\r",
+							"pm.collectionVariables.set(\"patched_status\", json.status);\r",
+							"pm.collectionVariables.set(\"patched_gender\", json.gender);\r",
+							"// 3. Проверка структуры тела ответа (JSON Schema)\r",
+							"const schema = {\r",
+							"    type: \"object\",\r",
+							"    required: [\"id\", \"name\", \"email\", \"gender\", \"status\"],\r",
+							"    properties: {\r",
+							"        id: { type: \"integer\" },\r",
+							"        name: { type: \"string\" },\r",
+							"        email: { type: \"string\", format: \"email\" },\r",
+							"        gender: { type: \"string\", enum: [\"male\", \"female\"] },\r",
+							"        status: { type: \"string\", enum: [\"active\", \"inactive\"] }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"const result = tv4.validateMultiple(json, schema);\r",
+							"\r",
+							"pm.test(\"Схема ответа корректна\", function () {\r",
+							"    pm.expect(result.valid).to.be.true;\r",
+							"});\r",
+							"\r",
+							"if (!result.valid) {\r",
+							"    console.warn(\"Ошибки схемы:\");\r",
+							"    result.errors.forEach(err => console.log(`- ${err.message} at ${err.dataPath}`));\r",
+							"}\r",
+							"\r",
+							"// 4. Негативные проверки:\r",
+							"if (code === 422) {\r",
+							"    pm.test(\"Ожидаемый отказ при некорректных данных\", function () {\r",
+							"        pm.expect(json).to.have.property(\"data\");\r",
+							"        const errorFields = json.data.map(e => e.field);\r",
+							"        pm.expect(errorFields).to.include.any.members([\"email\", \"gender\", \"status\"]);\r",
+							"    });\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Updated User Name\",\r\n  \"gender\": \"male\",\r\n  \"status\": \"inactive\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{createdUserId}}",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{createdUserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"pm.collectionVariables.set(\"createdUserId\", response.id);\r",
+							"console.log(\"User ID saved:\", response.id);\r",
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"GET 200 OK\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Name соответствует обновлённому\", () => {\r",
+							"  pm.expect(json.name).to.eql(pm.collectionVariables.get(\"patched_name\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status соответствует обновлённому\", () => {\r",
+							"  pm.expect(json.status).to.eql(pm.collectionVariables.get(\"patched_status\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Gender соответствует обновлённому\", () => {\r",
+							"  pm.expect(json.gender).to.eql(pm.collectionVariables.get(\"patched_gender\"));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"randomNumber\", Math.floor(Math.random() * 100000));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"PatchUser\",\r\n  \"gender\": \"male\",\r\n  \"email\": \"autouser_{{randomNumber}}@mail.com\",\r\n  \"status\": \"active\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{createdUserId}}",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{createdUserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 204 or 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([204, 404]);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{createdUserId}}",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{createdUserId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "createdUserId",
+			"value": ""
+		},
+		{
+			"key": "patched_name",
+			"value": ""
+		},
+		{
+			"key": "patched_status",
+			"value": ""
+		},
+		{
+			"key": "patched_gender",
+			"value": ""
+		}
+	]
+}
