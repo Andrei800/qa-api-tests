@@ -50,8 +50,10 @@ qa-api-tests/
 ├── scripts/                  # Run scripts
 ├── reports/                  # HTML reports (generated)
 ├── docs/
-│   ├── test-cases-post-users-EN.md
-│   └── test-cases-other-endpoints.md
+│   ├── test-cases-post-users.md
+│   ├── test-cases-other-endpoints.md
+│   ├── test-cases.md         # Manual test cases
+│   └── bug-reports.md        # Reported bugs
 ├── README.md
 └── .gitignore
 ```
@@ -71,13 +73,15 @@ qa-api-tests/
 
 ## 📄 Test Cases
 
-- [POST /users — Negative Test Cases](./docs/test-cases-post-users-EN.md)  
+- [POST /users — Negative Test Cases](./docs/test-cases-post-users.md)  
   Covers email validation, missing/invalid fields, incorrect types, etc.
 
 - [Other Endpoints — GET, PATCH, DELETE](./docs/test-cases-other-endpoints.md)  
   Covers schema validation (reqres.in), PATCH/GET chains, delete scenarios.
 
 ---
+
+=======
 
 ## 🐞 Bug Reports
 

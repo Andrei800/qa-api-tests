@@ -1,0 +1,937 @@
+{
+	"info": {
+		"_postman_id": "1e22d58e-ab31-4090-bb93-5aead4ed4e8f",
+		"name": "Negative Tests — POST /users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46881943"
+	},
+	"item": [
+		{
+			"name": "Missing all fields",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ожидается 422 при пустых полях\", function () {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ответ содержит список ошибок по полям\", function () {\r",
+							"    const json = pm.response.json();\r",
+							"    pm.expect(json).to.be.an(\"array\");\r",
+							"    json.forEach(error => {\r",
+							"        pm.expect(error).to.have.property(\"field\");\r",
+							"        pm.expect(error).to.have.property(\"message\");\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"\",\r\n  \"job\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Missing email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"// Проверка кода ответа\r",
+							"pm.test(\"Ожидается статус 422\", () => {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"// Проверка наличия ошибки по полю email\r",
+							"pm.test(\"Поле email отсутствует и вызывает ошибку\", () => {\r",
+							"    const emailError = json.find(e => e.field === \"email\");\r",
+							"    pm.expect(emailError).to.exist;\r",
+							"    pm.expect(emailError.message.toLowerCase()).to.include(\"blank\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Test User\",\r\n  \"gender\": \"male\",\r\n  \"status\": \"active\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Missing gender",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", () => {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ошибка по отсутствующему gender\", () => {\r",
+							"    const genderError = json.find(e => e.field === \"gender\");\r",
+							"    pm.expect(genderError).to.exist;\r",
+							"    \r",
+							"    const msg = genderError.message.toLowerCase();\r",
+							"    pm.expect(msg.includes(\"blank\") || msg.includes(\"male\")).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"No Gender User\",\r\n  \"email\": \"nogender@example.com\",\r\n  \"status\": \"active\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Missing name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", function () {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ответ содержит ошибку по полю name\", function () {\r",
+							"    const nameError = json.find(e => e.field === \"name\");\r",
+							"    pm.expect(nameError).to.exist;\r",
+							"    pm.expect(nameError.message.toLowerCase()).to.include(\"can't be blank\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"missing_name@example.com\",\r\n  \"gender\": \"male\",\r\n  \"status\": \"active\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Invalid email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", function () {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ответ содержит массив ошибок\", function () {\r",
+							"    pm.expect(json).to.be.an(\"array\");\r",
+							"    json.forEach(error => {\r",
+							"        pm.expect(error).to.have.property(\"field\");\r",
+							"        pm.expect(error).to.have.property(\"message\");\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"not-an-email\",\r\n  \"name\": \"Test User\",\r\n  \"gender\": \"robot\",\r\n  \"status\": \"\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Invalid gender",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", function () {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ответ содержит ошибку по полю gender\", function () {\r",
+							"    const genderError = json.find(e => e.field === \"gender\");\r",
+							"    pm.expect(genderError).to.exist;\r",
+							"    \r",
+							"    const message = genderError.message.toLowerCase();\r",
+							"    pm.expect(\r",
+							"        message.includes(\"male\") || \r",
+							"        message.includes(\"female\")\r",
+							"    ).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Test User\",\r\n  \"email\": \"test_invalid_gender@example.com\",\r\n  \"gender\": \"robot\",\r\n  \"status\": \"active\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Invalid status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", function () {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ответ содержит ошибку по полю status\", function () {\r",
+							"    const statusError = json.find(e => e.field === \"status\");\r",
+							"    pm.expect(statusError).to.exist;\r",
+							"    \r",
+							"    const message = statusError.message.toLowerCase();\r",
+							"    pm.expect(\r",
+							"        message.includes(\"blank\") || \r",
+							"        message.includes(\"active\") || \r",
+							"        message.includes(\"inactive\")\r",
+							"    ).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Test User\",\r\n  \"email\": \"valid@example.com\",\r\n  \"gender\": \"male\",\r\n  \"status\": \"activated\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Duplicate email.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", function () {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Email уже существует\", function () {\r",
+							"    pm.expect(json).to.be.an(\"array\");\r",
+							"    const emailError = json.find(e => e.field === \"email\");\r",
+							"    pm.expect(emailError).to.exist;\r",
+							"    pm.expect(emailError.message.toLowerCase()).to.include(\"has already been taken\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"duplicate@example.com\",\r\n  \"name\": \"Test User\",\r\n  \"gender\": \"male\",\r\n  \"status\": \"active\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST with incorrect data types.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", () => {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"console.log(\"Ответ JSON:\", json);\r",
+							"\r",
+							"pm.test(\"Ошибки по типам данных\", () => {\r",
+							"    pm.expect(json).to.be.an(\"array\");\r",
+							"    \r",
+							"    const fields = [\"name\", \"email\", \"gender\", \"status\"];\r",
+							"    fields.forEach(field => {\r",
+							"        const error = json.find(e => e.field === field);\r",
+							"        pm.expect(error, `Ожидалась ошибка по полю ${field}`).to.exist;\r",
+							"        pm.expect(error.message).to.not.be.empty;\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": true,\r\n  \"gender\": 0,\r\n  \"status\": false\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request without a body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", () => {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ошибки по всем обязательным полям при пустом теле\", () => {\r",
+							"    const expectedFields = [\"name\", \"email\", \"gender\", \"status\"];\r",
+							"    expectedFields.forEach(field => {\r",
+							"        const error = json.find(e => e.field === field);\r",
+							"        pm.expect(error, `Нет ошибки по полю ${field}`).to.exist;\r",
+							"        pm.expect(error.message).to.not.be.empty;\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fields contain only spaces (\" \")",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Ожидается статус 422\", () => {\r",
+							"    pm.response.to.have.status(422);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ошибки по всем полям с пробелами\", () => {\r",
+							"    const fieldsToCheck = [\"name\", \"email\", \"gender\", \"status\"];\r",
+							"    fieldsToCheck.forEach(field => {\r",
+							"        const error = json.find(e => e.field === field);\r",
+							"        pm.expect(error, `Нет ошибки по полю ${field}`).to.exist;\r",
+							"\r",
+							"        const msg = error.message.toLowerCase();\r",
+							"        pm.expect(msg.includes(\"blank\") || msg.includes(\"invalid\") || msg.includes(\"male\") || msg.includes(\"active\"))\r",
+							"          .to.be.true;\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"   \",\r\n  \"email\": \"   \",\r\n  \"gender\": \"   \",\r\n  \"status\": \"   \"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Successful update of all fields (PATCH)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Сохраняем переменные для дальнейшей проверки (например, в GET)\r",
+							"pm.collectionVariables.set(\"patched_name\", response.name);\r",
+							"pm.collectionVariables.set(\"patched_status\", response.status);\r",
+							"pm.collectionVariables.set(\"patched_gender\", response.gender);\r",
+							"\r",
+							"// Проверка кода ответа\r",
+							"pm.test(\"PATCH вернул 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Проверка полей\r",
+							"pm.test(\"Имя успешно обновлено\", function () {\r",
+							"    pm.expect(response.name).to.eql(\"Updated Test User\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Статус успешно обновлён\", function () {\r",
+							"    pm.expect(response.status).to.eql(\"inactive\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Пол обновлён корректно\", function () {\r",
+							"    pm.expect(response.gender).to.eql(\"female\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Updated Test User\",\r\n  \"status\": \"inactive\",\r\n  \"gender\": \"female\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{createdUserId}}",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{createdUserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check PATCH User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"pm.collectionVariables.set(\"createdUserId\", response.id);\r",
+							"console.log(\"User ID saved:\", response.id);\r",
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"GET 200 OK\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Name соответствует обновлённому\", () => {\r",
+							"  pm.expect(json.name).to.eql(pm.collectionVariables.get(\"patched_name\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status соответствует обновлённому\", () => {\r",
+							"  pm.expect(json.status).to.eql(pm.collectionVariables.get(\"patched_status\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Gender соответствует обновлённому\", () => {\r",
+							"  pm.expect(json.gender).to.eql(pm.collectionVariables.get(\"patched_gender\"));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"randomNumber\", Math.floor(Math.random() * 100000));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "e95331bd56891b4db76b146a9aa183afcc1c2c1174406bf832105207378dc3b0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"PatchUser\",\r\n  \"gender\": \"male\",\r\n  \"email\": \"autouser_{{randomNumber}}@mail.com\",\r\n  \"status\": \"active\"\r\n}"
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{createdUserId}}",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{createdUserId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "createdUserId",
+			"value": ""
+		},
+		{
+			"key": "patched_name",
+			"value": ""
+		},
+		{
+			"key": "patched_status",
+			"value": ""
+		},
+		{
+			"key": "patched_gender",
+			"value": ""
+		}
+	]
+}
