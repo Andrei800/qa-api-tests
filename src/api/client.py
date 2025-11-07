@@ -85,25 +85,18 @@ def request(self, method, path, **kw):
         log.info("429 received. Attempt %d/%d. Sleeping for %.2fs (Retry-After=%s)",
                  attempt, max_attempts, delay, retry_after_header)
         time.sleep(delay)
-
-    # теоретически недостижимо
     return resp
 
- # удобные методы
-def users(self): return self.request("GET", "/users")
-def create_user(self, payload): return self.request("POST", "/users", json=payload)
-def get_user(self, id): return self.request("GET", f"/users/{id}")
-def patch_user(self, id, payload): return self.request("PATCH", f"/users/{id}", json=payload)
-def delete_user(self, id): return self.request("DELETE", f"/users/{id}")
-
-
-try:
-    # если client.py лежит прямо в src/
-    from api.client import ApiClient
-    # если переложишь в src/api/client.py — меняем на:
-    # from api.client import ApiClient
-except Exception as e:
-    raise RuntimeError(f"Cannot import ApiClient: {e}")
+def users(self):
+    return self.request("GET", "/users")
+def create_user(self, payload):
+    return self.request("POST", "/users", json=payload)
+def get_user(self, id):
+    return self.request("GET", f"/users/{id}")
+def patch_user(self, id, payload):
+    return self.request("PATCH", f"/users/{id}", json=payload)
+def delete_user(self, id):
+    return self.request("DELETE", f"/users/{id}")
 
 @pytest.fixture(scope="session")
 def client(base_url, token) -> "ApiClient":
