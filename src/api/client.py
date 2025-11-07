@@ -1,10 +1,13 @@
 
 import pytest, time, random, datetime
+import os, threading
 import backoff, requests, logging
 from email.utils import parsedate_to_datetime  # для Retry-After: HTTP-date
 
 log = logging.getLogger("api")
 class ApiClient:
+    _lock = threading.Lock()
+    _next_allowed_time = 0.0  # timestamp, когда можно делать следующий запрос
     def __init__(self, base_url, token, timeout=15):
         self.base = base_url.rstrip("/")
         self.session = requests.Session()
@@ -28,11 +31,20 @@ def request(self, method, path, **kw):
     - экспоненциальный backoff с джиттером и верхней границей
     """
     url = f"{self.base}{path}"
-    max_attempts = kw.pop("max_attempts", 5)     # можно переопределить из теста
+    max_attempts = kw.pop("max_attempts", 6)     # можно переопределить из теста
     base_delay = kw.pop("base_delay", 1.0)       # старт задержки
     cap_delay = kw.pop("cap_delay", 20.0)        # максимум задержки
 
     for attempt in range(1, max_attempts + 1):
+        if os.getenv("CI") == "true":  # активируем только в GitHub Actions
+            rate_qps = float(os.getenv("RATE_LIMIT_QPS", "2.0"))  # 2 запроса/сек по умолчанию
+            min_interval = 1.0 / rate_qps
+            with ApiClient._lock:
+                now = time.time()
+                if now < ApiClient._next_allowed_time:
+                    delay = ApiClient._next_allowed_time - now
+                    time.sleep(delay)
+                    ApiClient._next_allowed_time = time.time() + min_interval
         resp = self.session.request(method, url, timeout=self.timeout, **kw)
         rt = resp.elapsed.total_seconds()
         log.debug("HTTP %s %s -> %s in %.3fs", method, path, resp.status_code, rt)
