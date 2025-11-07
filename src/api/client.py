@@ -1,6 +1,4 @@
-# src/api/client.py
 from __future__ import annotations
-
 import os
 import time
 import random
