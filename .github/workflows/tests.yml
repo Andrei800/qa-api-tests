@@ -45,6 +45,7 @@ jobs:
       - name: Run pytest (${{ matrix.mark }})
         env:
           TOKEN: ${{ secrets.GOREST_TOKEN }}
+          BASE_URL: ${{ vars.BASE_URL }}
           PERF_THRESHOLD: "1.5"
         run: |
           mkdir -p reports
