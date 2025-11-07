@@ -2,7 +2,7 @@
 import os, warnings, sys
 import logging
 import pytest
-from client import ApiClient
+from api.client import ApiClient
 from dotenv import load_dotenv
 import logging
 logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -15,7 +15,7 @@ if os.path.isdir(SRC_DIR) and SRC_DIR not in sys.path:
 
 try:
     # если client.py лежит в src/
-    from client import ApiClient
+    from api.client import ApiClient
 except ModuleNotFoundError:
     # если клиент лежит в src/api/client.py
     from api.client import ApiClient
