@@ -18,6 +18,7 @@ on:
 jobs:
   pytest:
     runs-on: ubuntu-latest
+    environment: BASE_URL
     timeout-minutes: 30
     strategy:
       fail-fast: false
