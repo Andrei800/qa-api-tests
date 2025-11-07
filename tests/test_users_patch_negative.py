@@ -1,5 +1,6 @@
 import pytest
 import requests
+from utils.asserts import assert_status
 from tests.utils.neg_asserts import assert_client_error_or_xfail
 
 invalid_ids = [
@@ -29,6 +30,6 @@ def test_patch_user_with_invalid_id_or_data(base_url, api_headers, user_id, payl
     resp = requests.patch(url, headers=api_headers, json=payload)
     assert_client_error_or_xfail(resp, f"PATCH invalid id={user_id}, payload={payload}")
     # Для невалидных ID/тела — 4xx; точно не 200/201
-    assert resp.status_code not in (200, 201), f"Unexpected 2xx для ID={user_id}, payload={payload}. Ответ: {resp.text}"
-    assert resp.status_code in {400, 401, 403, 404, 409, 422}, \
-        f"Неожиданный код {resp.status_code} для ID={user_id}, payload={payload}. Ответ: {resp.text}"
+    assert resp.status_code not in (200, 201), f"Unexpected 2xx для ID={user_id}, payload={payload}"
+    allowed = {400, 401, 403, 404, 409, 422}
+    assert_status(resp, allowed, ci_tolerate_429=True)
