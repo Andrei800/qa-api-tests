@@ -57,27 +57,6 @@ def token() -> str:
     logger.info("Auth token loaded: %s", _mask_secret(t))
     return t
 
-@pytest.fixture()
-def user_fixture(client):
-    """Создаёт пользователя и удаляет его после теста."""
-    payload = {
-        "name": "QA Temp",
-        "gender": "male",
-        "email": f"qa_{int(time.time()*1000)}@example.com",
-        "status": "active",
-    }
-    resp = client.create_user(payload)
-    # допустим 201, иногда 200 (если API по-другому возвращает)
-    assert resp.status_code in {201, 200}, f"Create failed: {resp.status_code} {resp.text}"
-    user = resp.json()
-    try:
-        yield user  # user["id"], user["email"], ...
-    finally:
-        # на всякий случай — не валим тест, если уже удалён
-        del_resp = client.delete_user(user.get("id"))
-        if del_resp.status_code not in {200, 204, 404}:
-            print(f"Cleanup delete returned {del_resp.status_code}: {del_resp.text}")
-
 @pytest.fixture
 def api_headers(token):
     # В логах не показываем Authorization целиком
@@ -114,3 +93,25 @@ def rate_burst_count(request) -> int:
 def client(base_url, token) -> "ApiClient":
     """Единый HTTP‑клиент для тестов с таймаутами/ретраями."""
     return ApiClient(base_url=base_url, token=token, timeout=15)
+
+def user_fixture(client):
+    """Создаёт пользователя и удаляет его после теста."""
+    payload = {
+        "name": "QA Temp",
+        "gender": "male",
+        "email": f"qa_{int(time.time()*1000)}@example.com",
+        "status": "active",
+    }
+    resp = client.create_user(payload)
+    assert resp.status_code in {201, 200}, f"Create failed: {resp.status_code} {resp.text}"
+    user = resp.json()
+    try:
+        yield user
+    finally:
+        try:
+            del_resp = client.delete_user(user.get("id"))
+            # не валим тест, если уже удалён/не найден
+            if del_resp.status_code not in {200, 204, 404}:
+                print(f"Cleanup delete returned {del_resp.status_code}: {del_resp.text}")
+        except Exception:
+            pass
