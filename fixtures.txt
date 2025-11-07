@@ -1,0 +1,85 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-8.3.3, pluggy-1.6.0
+rootdir: C:\QA\qa-api-tests
+plugins: Faker-27.0.0, html-4.1.1, metadata-3.1.1
+collected 0 items
+cache -- .venv\Lib\site-packages\_pytest\cacheprovider.py:556
+    Return a cache object that can persist state between testing sessions.
+
+capsysbinary -- .venv\Lib\site-packages\_pytest\capture.py:1006
+    Enable bytes capturing of writes to ``sys.stdout`` and ``sys.stderr``.
+
+capfd -- .venv\Lib\site-packages\_pytest\capture.py:1034
+    Enable text capturing of writes to file descriptors ``1`` and ``2``.
+
+capfdbinary -- .venv\Lib\site-packages\_pytest\capture.py:1062
+    Enable bytes capturing of writes to file descriptors ``1`` and ``2``.
+
+capsys -- .venv\Lib\site-packages\_pytest\capture.py:978
+    Enable text capturing of writes to ``sys.stdout`` and ``sys.stderr``.
+
+doctest_namespace [session scope] -- .venv\Lib\site-packages\_pytest\doctest.py:741
+    Fixture that returns a :py:class:`dict` that will be injected into the
+    namespace of doctests.
+
+pytestconfig [session scope] -- .venv\Lib\site-packages\_pytest\fixtures.py:1345
+    Session-scoped fixture that returns the session's :class:`pytest.Config`
+    object.
+
+record_property -- .venv\Lib\site-packages\_pytest\junitxml.py:280
+    Add extra properties to the calling test.
+
+record_xml_attribute -- .venv\Lib\site-packages\_pytest\junitxml.py:303
+    Add extra xml attributes to the tag for the calling test.
+
+record_testsuite_property [session scope] -- .venv\Lib\site-packages\_pytest\junitxml.py:341
+    Record a new ``<property>`` tag as child of the root ``<testsuite>``.
+
+tmpdir_factory [session scope] -- .venv\Lib\site-packages\_pytest\legacypath.py:298
+    Return a :class:`pytest.TempdirFactory` instance for the test session.
+
+tmpdir -- .venv\Lib\site-packages\_pytest\legacypath.py:305
+    Return a temporary directory path object which is unique to each test
+    function invocation, created as a sub directory of the base temporary
+    directory.
+
+caplog -- .venv\Lib\site-packages\_pytest\logging.py:598
+    Access and control log capturing.
+
+monkeypatch -- .venv\Lib\site-packages\_pytest\monkeypatch.py:31
+    A convenient fixture for monkey-patching.
+
+recwarn -- .venv\Lib\site-packages\_pytest\recwarn.py:35
+    Return a :class:`WarningsRecorder` instance that records all warnings emitted by test functions.
+
+tmp_path_factory [session scope] -- .venv\Lib\site-packages\_pytest\tmpdir.py:242
+    Return a :class:`pytest.TempPathFactory` instance for the test session.
+
+tmp_path -- .venv\Lib\site-packages\_pytest\tmpdir.py:257
+    Return a temporary directory path object which is unique to each test
+    function invocation, created as a sub directory of the base temporary
+    directory.
+
+
+-------------- fixtures defined from faker.contrib.pytest.plugin --------------
+faker -- .venv\Lib\site-packages\faker\contrib\pytest\plugin.py:24
+    Fixture that returns a seeded and suitable ``Faker`` instance.
+
+
+----------------- fixtures defined from pytest_html.fixtures ------------------
+extra -- .venv\Lib\site-packages\pytest_html\fixtures.py:12
+    DEPRECATED: Add details to the HTML reports.
+
+extras -- .venv\Lib\site-packages\pytest_html\fixtures.py:34
+    Add details to the HTML reports.
+
+
+---------------- fixtures defined from pytest_metadata.plugin -----------------
+metadata [session scope] -- .venv\Lib\site-packages\pytest_metadata\plugin.py:46
+    Provide test session metadata
+
+include_metadata_in_junit_xml [session scope] -- .venv\Lib\site-packages\pytest_metadata\plugin.py:52
+    Provide test session metadata
+
+
+============================ no tests ran in 0.01s ============================
