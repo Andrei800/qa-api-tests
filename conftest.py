@@ -94,7 +94,7 @@ def client(base_url, token) -> "ApiClient":
     """Единый HTTP‑клиент для тестов с таймаутами/ретраями."""
     return ApiClient(base_url=base_url, token=token, timeout=15)
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def user_fixture(client):
     """Создаёт пользователя и удаляет его после теста."""
     payload = {
