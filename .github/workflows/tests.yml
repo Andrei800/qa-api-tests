@@ -44,15 +44,14 @@ jobs:
 
       - name: Run pytest (${{ matrix.mark }})
         env:
-          # важное: токен берем из GitHub Secrets!
           TOKEN: ${{ secrets.GOREST_TOKEN }}
-          # можно прокинуть и другие переменные окружения:
-          PERF_THRESHOLD: "1.5"
+        PERF_THRESHOLD: "1.5"
         run: |
           mkdir -p reports
+          safe_name=$(echo "${{ matrix.mark }}" | tr ' ' '-')
           python -m pytest -m "${{ matrix.mark }}" -v \
-            --html=reports/${{ matrix.mark// /_ }}.html \
-            --self-contained-html
+          --html=reports/${safe_name}.html \
+          --self-contained-html
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
