@@ -1,0 +1,29 @@
+# виртуальное окружение
+.venv/
+__pycache__/
+
+# Отчёты — не храним в Git
+/reports/*
+*.html
+
+# Node-папки и пакеты
+node_modules/
+
+# Логи
+*.log
+
+# Секреты и токены (если добавишь)
+/.env
+.env*
+
+# Кэш Postman
+.postman*
+
+# ОС-мусор
+.DS_Store
+Thumbs.db
+
+# pycache и IDE
+*.pyc
+.vscode/
+.idea/

@@ -1,0 +1,5 @@
+name,email,gender,status,expected
+,not-email,male,active,422
+NoEmail,,female,active,422
+BadGender,x@example.com,unknown,active,422
+BadStatus,y@example.com,male,weird,422

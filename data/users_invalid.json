@@ -1,0 +1,6 @@
+[
+  {"name": "", "email": "bad", "gender": "male", "status": "active", "expected": 422},
+  {"name": "NoEmail", "email": "", "gender": "female", "status": "active", "expected": 422},
+  {"name": "BadGender", "email": "x@example.com", "gender": "unknown", "status": "active", "expected": 422},
+  {"name": "BadStatus", "email": "y@example.com", "gender": "male", "status": "weird", "expected": 422}
+]
