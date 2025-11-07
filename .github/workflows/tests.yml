@@ -45,7 +45,7 @@ jobs:
       - name: Run pytest (${{ matrix.mark }})
         env:
           TOKEN: ${{ secrets.GOREST_TOKEN }}
-        PERF_THRESHOLD: "1.5"
+          PERF_THRESHOLD: "1.5"
         run: |
           mkdir -p reports
           safe_name=$(echo "${{ matrix.mark }}" | tr ' ' '-')
