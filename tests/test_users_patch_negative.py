@@ -1,6 +1,6 @@
 import pytest
 import requests
-from utils.asserts import assert_status
+from src.utils.asserts import assert_status
 from tests.utils.neg_asserts import assert_client_error_or_xfail
 
 invalid_ids = [
